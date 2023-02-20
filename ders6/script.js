@@ -1,43 +1,20 @@
-let haberListeEleman = document.querySelector("#haberListe")
+let prObje = new Promise( 
+    (a, b) => {
+        //..... zaman alan işlemler burada kodlanır
+        for ( let i = 0; i<50000; i++ ) {
+            console.log(i)
+        }
 
-function haberGoster() {
-    
-    haberListeEleman.innerHTML = ""
+        a({ gidenSMS: 12, gitmeyenSMS:1 })
+    }  
+)
 
-    fetch("https://hn.algolia.com/api/v1/search?query=chatgpt")
-    .then(sonuc => sonuc.json())
-    .then(veri => {
-        
-        console.log(veri)
+prObje.then( (deger)=>{ console.log("SMS gönderimi tamamlandı" + deger.gidenSMS) } )
 
-        let haberArray = veri.hits
+prObje.catch( (hata) => { console.log(hata)  } )
+//prObje.then( (deger)=>{ console.log("Mesaj 2" + deger) } )
 
-        haberArray.forEach(eleman => {
-            let baslik = eleman.title
-            let yazar = eleman.author
-            let haberLink = eleman.url
-            let yorumSayisi = eleman.num_comments
 
-            let yeniKolon = document.createElement("div")
-            yeniKolon.classList.add("col-md-3")
+//Promiseler içerisinde süre alan kodlar barındırır. İşlemler tamamlanınca negatrif veya pozitif bir sonuc döndürürler..
 
-            let haberSablonHTML = `
-                <div class="card" style="width: 100%;">
-                    <div class="card-body">
-                      <h5 class="card-title">${baslik}</h5>
-                      <h6 class="card-subtitle mb-2 text-muted">${yazar}</h6>
-
-                      <a href="${haberLink}" class="card-link">Haber bağlantısı</a>
-                      Yorum: <span>${yorumSayisi}</span>
-                    </div>
-                </div>
-            `
-            yeniKolon.innerHTML = haberSablonHTML
-
-            haberListeEleman.append(yeniKolon)
-        });
-    })
-
-}
-
-setTimeout( haberGoster , 3000 )
+//Programcılar, promiseleri dinleyerek, promiseler işini bitirince farklı işlemler yaptırmak üzere kodlarını yazabilir...
