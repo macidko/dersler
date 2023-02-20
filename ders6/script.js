@@ -1,20 +1,36 @@
-var akordiyonButonlar = document.getElementsByClassName("accordion");
-var i;
+// http://api.open-notify.org/iss-now.json
 
-for (i = 0; i < akordiyonButonlar.length; i++) {
+let kutu1Elemani = document.querySelector("#kutu1")
+let haritaOlusturuldu = false
+var map;
+var marker;
 
-  akordiyonButonlar[i].addEventListener("click", function() {
-    /* Toggle between adding and removing the "active" class,
-    to highlight the button that controls the panel */
-    this.classList.toggle("active");
+setInterval( issHaritaGuncelle , 5000 )
 
-    /* Toggle between hiding and showing the active panel */
-    var panel = this.nextElementSibling;
-    if (panel.style.display === "block") {
-      panel.style.display = "none";
-    } else {
-      panel.style.display = "block";
-    }
-  });
-  
+function issHaritaGuncelle() {
+    fetch("http://api.open-notify.org/iss-now.json")
+    .then( (yanit)=> yanit.json() )
+    .then( (veri)=> {
+        let enlem = veri.iss_position.latitude
+        let boylam = veri.iss_position.longitude
+
+        kutu1Elemani.textContent = enlem + "," + boylam
+
+        if( haritaOlusturuldu === false ) {
+            map = L.map('map').setView([parseInt(enlem), parseInt(boylam)], 2);
+
+            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 4,
+                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            }).addTo(map);
+    
+            haritaOlusturuldu = true
+        }
+
+        if( marker )
+            marker.remove()
+        
+        marker = L.marker([parseInt(enlem), parseInt(boylam)]).addTo(map);
+        map.panTo([parseInt(enlem), parseInt(boylam)], animate=true);
+    } )
 }
