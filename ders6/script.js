@@ -1,36 +1,25 @@
-// http://api.open-notify.org/iss-now.json
+let kisiSayisiElemani = document.querySelector("#kisiSayisi")
+let kisiListesiElemani = document.querySelector("#kisiListesi")
 
-let kutu1Elemani = document.querySelector("#kutu1")
-let haritaOlusturuldu = false
-var map;
-var marker;
 
-setInterval( issHaritaGuncelle , 5000 )
+fetch("http://api.open-notify.org/astros.json")
+.then( sonuc => sonuc.json() )
+.then( veri => {
+    let kisiSayisi = veri.number
+    let kisiArray = veri.people
 
-function issHaritaGuncelle() {
-    fetch("http://api.open-notify.org/iss-now.json")
-    .then( (yanit)=> yanit.json() )
-    .then( (veri)=> {
-        let enlem = veri.iss_position.latitude
-        let boylam = veri.iss_position.longitude
+    kisiSayisiElemani.innerHTML = kisiSayisi
 
-        kutu1Elemani.textContent = enlem + "," + boylam
 
-        if( haritaOlusturuldu === false ) {
-            map = L.map('map').setView([parseInt(enlem), parseInt(boylam)], 2);
+    kisiListesiElemani.innerHTML = "" //içindeki spinner loading etiketlerini temizle
 
-            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                maxZoom: 4,
-                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-            }).addTo(map);
-    
-            haritaOlusturuldu = true
-        }
+    kisiArray.forEach(eleman => {
+        let adSoyad = eleman.name
 
-        if( marker )
-            marker.remove()
-        
-        marker = L.marker([parseInt(enlem), parseInt(boylam)]).addTo(map);
-        map.panTo([parseInt(enlem), parseInt(boylam)], animate=true);
-    } )
-}
+        let yeniLiElemani = document.createElement("li")
+        yeniLiElemani.classList.add("list-group-item")
+        yeniLiElemani.textContent = adSoyad
+
+        kisiListesiElemani.append(yeniLiElemani)
+    });
+} )
