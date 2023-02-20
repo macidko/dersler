@@ -1,25 +1,43 @@
-let kisiSayisiElemani = document.querySelector("#kisiSayisi")
-let kisiListesiElemani = document.querySelector("#kisiListesi")
+let haberListeEleman = document.querySelector("#haberListe")
 
+function haberGoster() {
+    
+    haberListeEleman.innerHTML = ""
 
-fetch("http://api.open-notify.org/astros.json")
-.then( sonuc => sonuc.json() )
-.then( veri => {
-    let kisiSayisi = veri.number
-    let kisiArray = veri.people
+    fetch("https://hn.algolia.com/api/v1/search?query=chatgpt")
+    .then(sonuc => sonuc.json())
+    .then(veri => {
+        
+        console.log(veri)
 
-    kisiSayisiElemani.innerHTML = kisiSayisi
+        let haberArray = veri.hits
 
+        haberArray.forEach(eleman => {
+            let baslik = eleman.title
+            let yazar = eleman.author
+            let haberLink = eleman.url
+            let yorumSayisi = eleman.num_comments
 
-    kisiListesiElemani.innerHTML = "" //içindeki spinner loading etiketlerini temizle
+            let yeniKolon = document.createElement("div")
+            yeniKolon.classList.add("col-md-3")
 
-    kisiArray.forEach(eleman => {
-        let adSoyad = eleman.name
+            let haberSablonHTML = `
+                <div class="card" style="width: 100%;">
+                    <div class="card-body">
+                      <h5 class="card-title">${baslik}</h5>
+                      <h6 class="card-subtitle mb-2 text-muted">${yazar}</h6>
 
-        let yeniLiElemani = document.createElement("li")
-        yeniLiElemani.classList.add("list-group-item")
-        yeniLiElemani.textContent = adSoyad
+                      <a href="${haberLink}" class="card-link">Haber bağlantısı</a>
+                      Yorum: <span>${yorumSayisi}</span>
+                    </div>
+                </div>
+            `
+            yeniKolon.innerHTML = haberSablonHTML
 
-        kisiListesiElemani.append(yeniLiElemani)
-    });
-} )
+            haberListeEleman.append(yeniKolon)
+        });
+    })
+
+}
+
+setTimeout( haberGoster , 3000 )
