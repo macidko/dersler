@@ -100,8 +100,6 @@ dilButonlari.forEach( buton=>{
 } )
 
 
-
-
 const warning = document.querySelector(".warning");
 warning.style.display =  "none";
 
