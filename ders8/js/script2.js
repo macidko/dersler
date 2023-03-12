@@ -61,9 +61,12 @@ durdurmaElemani.textContent = "Tümünü Kapat"
 durdurmaElemani.id = "durdurma-elemani"
 appElemani.append(durdurmaElemani)
 durdurmaElemani.addEventListener("click", olay=>{
-    modlar.forEach( mod=>{
+    modlar.forEach( (mod, indeks)=>{
         if( mod.audioEleman !== undefined && mod.audioEleman.paused !== true ) {
             mod.audioEleman.pause()
+            calanSesler = []
+            listeGuncelle()
+            console.log(indeks)
         }
     } )
 })
